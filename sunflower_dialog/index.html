@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sunflower-Animation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            margin: 0px;
+            background-color: #000000;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<script src="js/three.min.js"></script>
+<script src="js/DynamicTexture.js"></script>
+
+<script src="js/data-gui.js"></script>
+
+<script src="js/OrbitControls.js"></script>
+<script src="js/tween.js"></script>
+
+<script>
+    //////////////////////////////////////////////////
+    /// Initialize the parameters                  ///
+    ///	                                           ///
+    ///	                                           ///
+    //////////////////////////////////////////////////
+
+    var scene, renderer;
+    var camera, light;
+    var controls;
+    var group;
+    var LEFT_WIN_G
+    var RIGHT_WIN_G
+
+    init();
+    animate();
+
+
+    //create dynamic text on the object
+    function createTexture(text, color, lineHeight) {
+        var dynamicTexture = new THREEx.DynamicTexture(4096, 256)
+        dynamicTexture.context.font = "10px Arial";
+        dynamicTexture.texture.anisotropy = renderer.getMaxAnisotropy()
+        // update the text
+        dynamicTexture.clear(color)
+        // dynamictexture.drawText('Hello', undefined, 256, 'red')
+        dynamicTexture.drawTextCooked({
+            text: text,
+            lineHeight: lineHeight,
+            align: 'center',
+            fillStyle: '#474747'
+        })
+        return dynamicTexture.texture
+    }
+
+    // set the created window position
+    function setWindowPosition(window, rotation, x, isReversed) {
+        var tween = new TWEEN.Tween(window.position).to({
+            x: window.position.x + x,
+            y: window.position.y,
+            z: window.position.z
+        }, 1000)
+            .onUpdate(function (t) {
+                if (isReversed)
+                    window.rotation.y = (1 - t) * rotation
+                else
+                    window.rotation.y = t * rotation
+            })
+            .easing(TWEEN.Easing.Quartic.InOut)
+            .start()
+    }
+
+    function init() {
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        //Create camera
+        camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 500;
+
+        //Create scene
+        scene = new THREE.Scene();
+
+        //Create light
+        light = new THREE.PointLight();
+        light.position.set(0, 0, 500);
+        scene.add(light);
+
+        //Create helper grid
+        var gridHelper = new THREE.GridHelper(800, 50, 0x6B00B2, 0x2A2A2A);
+        gridHelper.position.y = -150;
+        gridHelper.position.x = 0;
+        scene.add(gridHelper);
+
+        //define two window groups
+        LEFT_WIN_G = new THREE.Group()
+        RIGHT_WIN_G = new THREE.Group()
+
+        scene.add(LEFT_WIN_G, RIGHT_WIN_G)
+
+        //create a new window
+        var createWindow = function (x, y, z) {
+            // instantiate a loader
+            var loader = new THREE.TextureLoader();
+            // load a resource
+            loader.load(
+                // resource URL
+                'img/window.png',
+                // Function when resource is loaded
+                function (texture) {
+                    // do something with the texture
+                    var materials = [
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({map: texture}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                    ];
+
+                    var content = new THREE.BoxGeometry(400, 300, 5);
+                    var winBox = new THREE.Mesh(content, new THREE.MultiMaterial(materials))
+                    winBox.position.set(x, y, z)
+                    winBox.rotation.z = Math.PI
+
+                    winBox.name = name
+                    if (winBox.position.x >= 0) {
+                        RIGHT_WIN_G.add(winBox)
+                    } else {
+                        LEFT_WIN_G.add(winBox)
+                    }
+                })
+        }
+
+        //create a new window
+        var createToast = function () {
+            var toast_texture = createTexture("邮件已发送成功", '#D9D9D9', 0.6)
+            // do something with the texture
+            var materials = [
+                new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                new THREE.MeshBasicMaterial({map: toast_texture}),
+                new THREE.MeshBasicMaterial({color: 0x9B72A7})
+            ];
+
+            var content = new THREE.BoxGeometry(200, 25, 3);
+            var toast = new THREE.Mesh(content, new THREE.MultiMaterial(materials))
+            toast.position.set(0, -200, 300)
+            scene.add(toast)
+
+            var tween = new TWEEN.Tween(toast.position).to({
+                x: 0,
+                y: -120,
+                z: 300
+            }, 1000)
+                .onComplete(function () {
+
+                    var tween = new TWEEN.Tween(toast.position).to({
+                        x: 0,
+                        y: -200,
+                        z: 300
+                    }, 1000)
+                        .onComplete(function () {
+                            scene.remove(toast)
+
+                        }, this).delay(2000).start()
+
+                }, this).start()
+        }
+
+        function createDialog() {
+            //Move the windows away
+
+            // instantiate a loader
+            var loader = new THREE.TextureLoader();
+            // load a resource
+            loader.load(
+                // resource URL
+                'img/content.png',
+                // Function when resource is loaded
+                function (texture) {
+                    // do something with the texture
+                    var materials = [
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({map: texture}),
+                    ];
+
+                    var content = new THREE.BoxGeometry(300, 200, 5);
+                    var dialogBox = new THREE.Mesh(content, new THREE.MultiMaterial(materials))
+
+                    var btn_texture = createTexture("关闭", '#DEDEDE', 0.6)
+
+                    var button_materials = [
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({color: 0x9B72A7}),
+                        new THREE.MeshBasicMaterial({map: btn_texture}),
+                    ];
+
+                    var button = new THREE.BoxGeometry(300, 30, 5)
+                    var dialogButton = new THREE.Mesh(button, new THREE.MultiMaterial(button_materials))
+                    dialogBox.name = 'content'
+                    dialogButton.name = 'button'
+
+                    group = new THREE.Group();
+                    group.add(dialogBox, dialogButton)
+                    group.position.set(0, 400, -800)
+                    dialogButton.translateY(100 + 15)
+                    dialogButton.rotation.z = Math.PI
+                    group.rotation.x = Math.PI / 2
+
+                    group.name = 'dialog'
+                    scene.add(group)
+                    tweenObj(group)
+
+                    //Add event listener for the dialog
+                    document.addEventListener('mousedown', onDocumentMouseDown, false);
+                    document.addEventListener('mousemove', onDocumentMouseMove, false)
+
+                },
+                // Function called when download progresses
+                function (xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                // Function called when download errors
+                function (xhr) {
+                    console.log('An error happened');
+                }
+            );
+
+        }
+
+        var removeElementFromParent = function (parent, children) {
+            parent.remove(children)
+        }
+
+        var emptyParent = function (parent) {
+            parent.children = []
+
+        }
+
+        //twenning the flying of dialog
+        function tweenObj(obj) {
+            var tween = new TWEEN.Tween(obj.position).to({
+                x: 0,
+                y: [300, 200, 100, 0],
+                z: [-500, -300, -100, 100, 300]
+            }, 1000)
+                .onStart(function () {
+                    if (LEFT_WIN_G.children && RIGHT_WIN_G.children) {
+                        setWindowPosition(LEFT_WIN_G, Math.PI / 4, -200)
+                        setWindowPosition(RIGHT_WIN_G, -Math.PI / 4, 200)
+                    }
+                })
+                .onUpdate(function (t) {
+                    obj.rotation.x = (1 + t) * Math.PI / 2
+                })
+                .interpolation(TWEEN.Interpolation.Bezier)
+                .onComplete(function () {
+                    if (LEFT_WIN_G.children && RIGHT_WIN_G.children) {
+                        setWindowPosition(LEFT_WIN_G, Math.PI / 4, 200, true)
+                        setWindowPosition(RIGHT_WIN_G, -Math.PI / 4, -200, true)
+                    }
+                }, this)
+                .delay(1000).start()
+        }
+
+
+        //Orbit control for the camera
+        controls = new THREE.OrbitControls(camera, renderer.domElement)
+        controls.addEventListener('change', render);
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        var setting = {
+            Window: false,
+            Dialog: false,
+            Toast: false
+        };
+
+
+        //Add user interface for adding or removing the objects from the scene
+        var gui = new dat.gui.GUI();
+        gui.remember(setting);
+
+        gui.add(setting, 'Window').onFinishChange(function (isChecked) {
+            if (isChecked) {
+                createWindow(100, 100, -100)
+                createWindow(600, 250, -350)
+                createWindow(-200, 60, -200)
+                createWindow(-500, 300, -250)
+            } else {
+                emptyParent(LEFT_WIN_G)
+                emptyParent(RIGHT_WIN_G)
+            }
+
+        });
+        gui.add(setting, 'Dialog').onFinishChange(function (isChecked) {
+            if (isChecked) {
+                createDialog()
+            } else {
+                var removedElement = scene.getObjectByName('dialog')
+                removeElementFromParent(scene, removedElement)
+            }
+
+        });
+
+        gui.add(setting, 'Toast').onFinishChange(function (isChecked) {
+            if (isChecked) {
+                createToast()
+            } else {
+            }
+
+        })
+    }
+
+    //tweening the dialog out
+    var dialogFade = function (obj) {
+        scene.remove(obj)
+        // var tween = new TWEEN.Tween(obj.position).to({
+        // 	x:0,
+        // 	y:-200,
+        // 	z:-800
+        // }, 1000)
+        // .onUpdate(function(t){
+        // 	obj.rotation.x = Math.PI+ t*Math.PI/2
+        // })
+        // .onComplete(function(){
+        // 	if(LEFT_WIN_G.children && RIGHT_WIN_G.children){		
+        // 		setWindowPosition(LEFT_WIN_G, Math.PI/4, 200, true)
+        // 		setWindowPosition(RIGHT_WIN_G, -Math.PI/4, -200, true)
+        // 	}
+        // }, this)
+        // .easing(TWEEN.Easing.Quadratic.In)
+        // .delay(1000)
+        // .start();
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    var INTERSECTED;
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+
+
+    function onDocumentMouseMove(event) {
+
+        if (scene.getObjectByName('dialog')) {
+
+            event.preventDefault();
+
+            //update the mouse virables
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObject(scene.getObjectByName('dialog').getObjectByName('button'));
+            if (intersects.length > 0) {
+                INTERSECTED = intersects[0].object;
+                INTERSECTED.material[5].map = createTexture("关闭", '#AC76DE', 0.6)
+            } else {
+                if (INTERSECTED)
+                    INTERSECTED.material[5].map = createTexture("关闭", '#DEDEDE', 0.6)
+            }
+
+        }
+
+    }
+
+    function onDocumentMouseDown(event) {
+        if (scene.getObjectByName('dialog')) {
+
+            event.preventDefault();
+
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObject(scene.getObjectByName('dialog').getObjectByName('button'));
+            if (intersects.length > 0) {
+                INTERSECTED = intersects[0].object;
+                INTERSECTED.material[5].map = createTexture("关闭", '#745196', 0.6)
+                setTimeout(function () {
+                    INTERSECTED.material[5].map = createTexture("关闭", '#DEDEDE', 0.6)
+                }, 200);
+
+                // if(LEFT_WIN_G.children && RIGHT_WIN_G.children){		
+                // setWindowPosition(LEFT_WIN_G, Math.PI/4, -200)
+                // setWindowPosition(RIGHT_WIN_G, -Math.PI/4, 200)
+                // }
+
+                dialogFade(group)
+            }
+
+        }
+
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        TWEEN.update();
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+</script>
+
+</body>
+</html>

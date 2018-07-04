@@ -1,0 +1,141 @@
+<html>
+	<head>
+		<title>Calendar</title>
+	</head>
+	<body>
+		<div class="top-space" id="date-picker">
+			<form>
+				Date: <input type="text" id="date-input" placeholder="2017-01-01">
+			</form>
+		</div>
+
+		<div class="box">
+			<div class="scroll-zone right-space-3x vertical-center-reverse" id="pre-zone">
+				<span class="year-indicator lightest float-right" id="pre-year-indicator"></span>
+				<div class="speed-block vertical-center-reverse" id="show-pre">
+					<div class="speed-block right-space-4x" id="show-pre-1"></div>
+					<div class="speed-block right-space-4x" id="show-pre-2"></div>
+					<div class="speed-block right-space-4x" id="show-pre-3"></div>				
+				</div>
+				<i class="icon-angle-left icon-3x right-space arrow" aria-hidden="true"></i>
+				<i class="icon-angle-left icon-3x arrow" aria-hidden="true"></i>
+				<i class="icon-angle-left icon-3x arrow" aria-hidden="true"></i>
+			</div>
+
+			<div class="box" id="year-bar" >
+				<i class="icon-angle-left icon-3x right-space arrow" id="pre" aria-hidden="true"></i>
+				<span class="year-block invisible-left" id="year-1"></span>
+				<span class="year-block darkest" id="year-2"></span>
+				<span class="year-block darker" id="year-3"></span>
+				<span class="year-block dark" id="year-4"></span>
+				<span class="year-block light" id="year-5"></span>
+				<span class="year-block lighter" id="year-6"></span>
+				<span class="year-block lightest" id="year-7"></span>
+				<span class="year-block lighter" id="year-8"></span>
+				<span class="year-block light" id="year-9"></span>
+				<span class="year-block dark" id="year-10"></span>
+				<span class="year-block darker" id="year-11"></span>
+				<span class="year-block darkest" id="year-12"></span>
+				<span class="year-block invisible-right" id="year-13"></span>
+				<i class="icon-angle-right icon-3x left-space arrow" id="next" aria-hidden="true"></i>
+			</div>
+
+			<div class="scroll-zone left-space-3x vertical-center" id="next-zone">
+				<span class="year-indicator lightest" id="next-year-indicator"></span>
+				<div class="speed-block vertical-center" id="show-next">
+					<div class="speed-block left-space-4x" id="show-next-1"></div>
+					<div class="speed-block left-space-4x" id="show-next-2"></div>
+					<div class="speed-block left-space-4x" id="show-next-3"></div>
+				</div>
+				<i class="icon-angle-right icon-3x left-space arrow" aria-hidden="true"></i>
+				<i class="icon-angle-right icon-3x left-space arrow" aria-hidden="true"></i>
+				<i class="icon-angle-right icon-3x left-space arrow" aria-hidden="true"></i>
+			</div>
+		</div>
+
+		<div id="date-block">
+			<div class="box" id="month-bar">
+			    <span class="vertical-center month-block" id="jan"><span>1</span></span>
+			    <span class="vertical-center month-block" id="feb"><span>2</span></span>
+			    <span class="vertical-center month-block" id="mar"><span>3</span></span>
+			    <span class="vertical-center month-block" id="apr"><span>4</span></span>
+			    <span class="vertical-center month-block" id="may"><span>5</span></span>
+			    <span class="vertical-center month-block" id="jun"><span>6</span></span>
+			    <span class="vertical-center month-block" id="jul"><span>7</span></span>
+			    <span class="vertical-center month-block" id="aug"><span>8</span></span>
+			    <span class="vertical-center month-block" id="sep"><span>9</span></span>
+			    <span class="vertical-center month-block" id="oct"><span>10</span></span>
+			    <span class="vertical-center month-block" id="nov"><span>11</span></span>
+			    <span class="vertical-center month-block" id="dec"><span>12</span></span>
+			</div>
+			<div class="box" id="day-block">
+				<table>
+				  <tr>
+				    <th>MON</th>
+				    <th>TUE</th>
+				    <th>WED</th>
+				    <th>THU</th>
+				    <th>FRI</th>
+				    <th>SAT</th>
+				    <th>SUN</th>
+				  </tr>
+				  <tr class="week-block">
+				    <td><div id="day-1">1</div></td>
+				    <td><div id="day-2">2</div></td>
+				    <td><div id="day-3">3</div></td>
+				    <td><div id="day-4">4</div></td>
+				    <td><div id="day-5">5</div></td>
+				    <td><div id="day-6">6</div></td>
+				    <td><div id="day-7">7</div></td>
+				  </tr>
+				  <tr class="week-block">
+				    <td><div id="day-8">8</div></td>
+				    <td><div id="day-9">9</div></td>
+				    <td><div id="day-10">10</div></td>
+				    <td><div id="day-11">11</div></td>
+				    <td><div id="day-12">12</div></td>
+				    <td><div id="day-13">13</div></td>
+				    <td><div id="day-14">14</div></td>
+				  </tr>
+				  <tr class="week-block">
+				    <td><div id="day-15">15</div></td>
+				    <td><div id="day-16">16</div></td>
+				    <td><div id="day-17">17</div></td>
+				    <td><div id="day-18">18</div></td>
+				    <td><div id="day-19">19</div></td>
+				    <td><div id="day-20">20</div></td>
+				    <td><div id="day-21">21</div></td>
+				  </tr>
+				  <tr class="week-block">
+				    <td><div id="day-22">22</div></td>
+				    <td><div id="day-23">23</div></td>
+				    <td><div id="day-24">24</div></td>
+				    <td><div id="day-25">25</div></td>
+				    <td><div id="day-26">26</div></td>
+				    <td><div id="day-27">27</div></td>
+				    <td><div id="day-28">28</div></td>
+				  </tr>
+				  <tr class="week-block">
+				    <td><div id="day-29">29</div></td>
+				    <td><div id="day-30">30</div></td>
+				    <td><div id="day-31">31</div></td>
+				    <td><div id="day-32"></div></td>
+				    <td><div id="day-33"></div></td>
+				    <td><div id="day-34"></div></td>
+				    <td><div id="day-35"></div></td>
+				  </tr>
+				</table>
+			</div>
+			<div class="box top-margin" id="confirm">
+				<img src="close-circle.png">
+			</div>
+		</div>
+
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/font-awesome/3.2.1/css/font-awesome.css">
+
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="index.js"></script>
+	</body>
+</html>

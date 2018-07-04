@@ -1,0 +1,122 @@
+<html>
+	<head>
+		<title>Test for Hololens - fold list</title>
+		<style type="text/css">
+			body{
+				display: flex;
+				flex-direction:row;
+				align-items: center; 
+				width: 100%;
+				height:100%;
+			}
+
+			.list{
+				width: 15%;
+				height: 90%;
+				position: relative;
+				top:0px;
+				left: 0px;
+				background-color: #D0D0D0;
+				font-size: 2vw;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.unfold{
+				margin-right: 5px;
+			}
+
+			.fold-l{
+				background: linear-gradient(to left, #919191, #EAEAEA)
+			}
+
+			.fold-r{
+				background: linear-gradient(to right, #919191, #EAEAEA)
+			}
+
+			.hide{
+				width: 0px;
+				height: 0px;
+				font-size: 0vw;
+			}
+
+/*			span{
+				width: 200px;
+			}*/
+
+		</style>
+	</head>
+	<body>
+<!-- 		<span></span>
+ -->		<div class="list unfold">List-1</div>
+		<div class="list unfold">List-2</div>
+		<div class="list unfold">List-3</div>
+		<div class="list">List-4</div>
+		<div class="list fold-r">List-5</div>
+		<div class="list fold-r">List-6</div>
+		<div class="list hide">List-7</div>
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+		<script type="text/javascript">
+		var list_index = 0;
+		var dist = $(".list:eq("+(list_index)+")").width();
+		$(".list:eq("+(list_index+4)+")").css({"width":"13%", "height":"80%"})
+		$(".list:eq("+(list_index+5)+")").css({"width":"10%", "height":"60%"})
+
+
+		function move (){
+				$('.list').css("transition", "0.3s linear")
+				if(list_index>0){
+					if(list_index>1)
+						$(".list:eq("+(list_index-2)+")").hide()
+					$(".list:eq("+(list_index-1)+")").css({"left": -dist*0.3, "width":"0", "height":"0"})
+				}
+
+				$(".list:eq("+(list_index)+")").css({"left": -dist*0.5, "width":"10%", "height":"60%"}).removeClass("unfold").addClass("fold-l")
+				$(".list:eq("+(list_index+1)+")").css({"left":-dist*0.5})
+				$(".list:eq("+(list_index+2)+")").css({"left":-dist*0.5})
+				$(".list:eq("+(list_index+3)+")").css({"left":-dist*0.5}).addClass("unfold")
+				$(".list:eq("+(list_index+4)+")").css({"left":-dist*0.5, "width":"15%", "height":"90%"}).removeClass("fold-r")
+				
+				if($(".list:eq("+(list_index+5)+")").hasClass("hide"))
+					$(".list:eq("+(list_index+5)+")").removeClass("hide")
+				$(".list:eq("+(list_index+5)+")").css({"left":-dist*0.5, "width":"13%", "height":"80%"}).unbind("click")
+
+				$(".list:eq("+(list_index+6)+")").css({"left":-dist*0.5, "width":"10%", "height":"60%", "font-size":"2vw"}).addClass("fold-r").bind("click", move)
+				$("body").append("<div class='list hide'>List-"+(list_index+8)+"</div>")
+
+				list_index++
+			}
+
+
+		$(".list:eq("+(list_index+5)+")").click(function(){			
+				move();			
+		})
+
+		var enter_left = $(".list:eq("+(list_index+4)+")").offset().left
+
+		var start_move
+		$('body').mouseover(function(event){
+			enter_left = $(".list:eq("+(list_index+4)+")").offset().left
+
+		  	//$('span').text(event.pageX +','+ parseInt(enter_left)+',' +window.innerWidth)
+
+		  	console.log(event.pageX +','+ parseInt(enter_left)+',' +window.innerWidth)
+		  	if(event.pageX>=enter_left){
+		  		window.clearInterval(start_move)
+		  		start_move = null
+		  		start_move = setInterval(move,1000)
+		  	}
+		  	else if(event.pageX<enter_left){
+		  		window.clearInterval(start_move)
+		  		start_move = null
+		  	}
+
+		});
+
+			
+		</script>
+	</body>
+</html>

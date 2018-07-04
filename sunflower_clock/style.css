@@ -1,0 +1,88 @@
+body {  
+	background: #CBCBCB
+}  
+
+svg{
+ 	display: block;
+ }
+
+canvas{
+ 	display: none;
+ 	opacity: 0.9;
+ 	position: absolute;
+ 	left: 0;
+ 	top: 0;
+ }
+
+.bg-light{
+	fill: #FFFFFF
+}
+.bg-dark{
+	fill: #000000
+}
+
+text{
+ 	font-size: 5vw;
+ }
+
+.box{
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	color: white
+}
+
+#control-panel{
+	width: 20%;
+	height:100%;
+	margin: 5px;
+}
+
+#clock-panel{
+	width: 80%;
+	height:100%;
+	margin: 10px;
+}
+
+/*#rotate-second {
+	-webkit-transform-origin: 0% 0%;
+	-moz-transform-origin: 0% 0%;
+	-ms-transform-origin: 0% 0%;
+	transform-origin: 0% 0%;
+	animation: rotate 60s linear infinite;
+}
+
+#rotate-minute {
+	-webkit-transform-origin: 0% 0%;
+	-moz-transform-origin: 0% 0%;
+	-ms-transform-origin: 0% 0%;
+	transform-origin: 0% 0%;
+	animation: rotate 3600s linear infinite;
+}
+
+#rotate-hour {
+	-webkit-transform-origin: 0% 0%;
+	-moz-transform-origin: 0% 0%;
+	-ms-transform-origin: 0% 0%;	
+	transform-origin: 0% 0%;
+	animation: rotate 216000s linear infinite;
+}
+
+@keyframes rotate
+{
+	100% {transform: rotate(360deg);}
+}
+
+@-ms-keyframes rotate
+{
+	100% {-ms-transform: rotate(360deg);}
+}*/
+
+.time-rect rect{
+	transition:fill 0.5s;
+}
+
+.time-rect rect:hover
+{     
+	fill:#8000FF
+}
